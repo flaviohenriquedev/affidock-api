@@ -128,6 +128,14 @@ public class UserService extends BaseService<UserEntity, UserRequest, UserRespon
     }
 
     @Transactional
+    public UserProfileResponse deleteAuthenticatedUserAvatar() {
+        UserEntity user = getAuthenticatedUserEntity();
+        user.setAvatarFileId(null);
+        user.setAvatarUrl(null);
+        return toProfileResponse(userRepository.save(user));
+    }
+
+    @Transactional
     public UserProfileResponse uploadAuthenticatedUserAvatar(String base64Data, String mimeType, String fileName) {
         UserEntity user = getAuthenticatedUserEntity();
         try {

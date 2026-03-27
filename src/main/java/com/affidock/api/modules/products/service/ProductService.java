@@ -56,7 +56,7 @@ public class ProductService extends BaseService<ProductEntity, ProductRequest, P
         entity.setName(request.name());
         entity.setAccentHex(request.accentHex());
         entity.setAffiliateUrl(request.affiliateUrl());
-        entity.setImageUrl(request.imageUrl());
+        entity.setImageUrl(normalizeNullable(request.imageUrl()));
         entity.setProducerName(request.producerName());
         entity.setOriginalPriceCents(request.originalPriceCents());
         entity.setSalePriceCents(request.salePriceCents());
@@ -69,7 +69,7 @@ public class ProductService extends BaseService<ProductEntity, ProductRequest, P
         entity.setName(request.name());
         entity.setAccentHex(request.accentHex());
         entity.setAffiliateUrl(request.affiliateUrl());
-        entity.setImageUrl(request.imageUrl());
+        entity.setImageUrl(normalizeNullable(request.imageUrl()));
         entity.setProducerName(request.producerName());
         entity.setOriginalPriceCents(request.originalPriceCents());
         entity.setSalePriceCents(request.salePriceCents());
@@ -296,6 +296,12 @@ public class ProductService extends BaseService<ProductEntity, ProductRequest, P
         } catch (NumberFormatException ex) {
             return null;
         }
+    }
+
+    private String normalizeNullable(String value) {
+        if (value == null) return null;
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     private String firstNonBlank(String... values) {

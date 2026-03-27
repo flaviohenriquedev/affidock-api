@@ -17,7 +17,6 @@ public record ProductRequest(
     String accentHex,
     @NotBlank(message = "products.validation.affiliateUrl.required")
     String affiliateUrl,
-    @NotBlank(message = "products.validation.imageUrl.required")
     @Size(max = 1200, message = "products.validation.imageUrl.length")
     String imageUrl,
     @NotBlank(message = "products.validation.producerName.required")

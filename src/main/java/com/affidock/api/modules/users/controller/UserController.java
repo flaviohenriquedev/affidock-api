@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +49,11 @@ public class UserController extends BaseController<UserRequest, UserResponse> {
     @PostMapping("/me/avatar")
     public ResponseEntity<UserProfileResponse> uploadMyAvatar(@Valid @RequestBody AvatarUploadRequest request) {
         return ResponseEntity.ok(userService.uploadAuthenticatedUserAvatar(request.base64Data(), request.mimeType(), request.fileName()));
+    }
+
+    @DeleteMapping("/me/avatar")
+    public ResponseEntity<UserProfileResponse> deleteMyAvatar() {
+        return ResponseEntity.ok(userService.deleteAuthenticatedUserAvatar());
     }
 
     @GetMapping("/me/avatar")
