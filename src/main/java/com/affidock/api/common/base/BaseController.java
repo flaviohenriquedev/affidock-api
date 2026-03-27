@@ -13,6 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public abstract class BaseController<REQ, RES> {
 
+    /**
+     * UUID only — avoids shadowing literal subpaths on the same base (e.g. {@code /enrich-from-url})
+     * being mistaken for {@code /{id}}.
+     */
+    private static final String ID_SEGMENT =
+        "{id:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}";
+
     private final BaseCrudService<REQ, RES> service;
 
     protected BaseController(BaseCrudService<REQ, RES> service) {
@@ -24,7 +31,7 @@ public abstract class BaseController<REQ, RES> {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/" + ID_SEGMENT)
     public ResponseEntity<RES> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(service.findById(id));
     }
@@ -34,12 +41,12 @@ public abstract class BaseController<REQ, RES> {
         return ResponseEntity.ok(service.findAll());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/" + ID_SEGMENT)
     public ResponseEntity<RES> update(@PathVariable UUID id, @RequestBody REQ request) {
         return ResponseEntity.ok(service.update(id, request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/" + ID_SEGMENT)
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

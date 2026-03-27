@@ -6,21 +6,32 @@ import com.affidock.api.common.base.BaseService;
 import com.affidock.api.modules.files.domain.FileAssetEntity;
 import com.affidock.api.modules.files.dto.FileAssetRequest;
 import com.affidock.api.modules.files.dto.FileAssetResponse;
+import com.affidock.api.modules.files.dto.PublicImageUploadRequest;
+import com.affidock.api.modules.files.dto.PublicImageUploadResponse;
 import com.affidock.api.modules.files.repository.FileAssetRepository;
+import com.affidock.api.modules.users.domain.UserEntity;
+import com.affidock.api.modules.users.repository.UserRepository;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.UUID;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 public class FileAssetService extends BaseService<FileAssetEntity, FileAssetRequest, FileAssetResponse> {
     private static final Path STORAGE_ROOT = Paths.get("storage");
     private final FileAssetRepository fileAssetRepository;
+    private final UserRepository userRepository;
 
-    public FileAssetService(FileAssetRepository repository) {
+    public FileAssetService(FileAssetRepository repository, UserRepository userRepository) {
         super(repository, "files.notfound");
         this.fileAssetRepository = repository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -73,6 +84,64 @@ public class FileAssetService extends BaseService<FileAssetEntity, FileAssetRequ
         } catch (Exception exception) {
             throw new WarningException("files.notfound");
         }
+    }
+
+    @Transactional
+    public PublicImageUploadResponse uploadPublicImage(PublicImageUploadRequest request) {
+        UserEntity user = getAuthenticatedUserEntity();
+        try {
+            String sanitizedMime = normalizeImageMimeType(request.mimeType());
+            byte[] content = java.util.Base64.getDecoder().decode(request.base64Data());
+            String extension = extensionFromMimeType(sanitizedMime);
+            String objectKey = "uploads/" + user.getId() + "/" + UUID.randomUUID() + "." + extension;
+            Path outputPath = STORAGE_ROOT.resolve(objectKey);
+            Files.createDirectories(outputPath.getParent());
+            Files.write(outputPath, content);
+
+            FileAssetEntity asset = new FileAssetEntity();
+            asset.setId(UUID.randomUUID());
+            asset.setStatus(EntityStatus.ATIVO);
+            asset.setStorageProvider("SIMULATED_AWS_S3");
+            asset.setObjectKey(objectKey.replace('\\', '/'));
+            asset.setPublicUrl("pending");
+            asset.setMimeType(sanitizedMime);
+            asset.setSizeBytes(content.length);
+            asset.setOriginalName(
+                StringUtils.hasText(request.fileName()) ? request.fileName() : "upload." + extension
+            );
+            FileAssetEntity saved = fileAssetRepository.save(asset);
+            saved.setPublicUrl("/api/v1/files/public/" + saved.getId());
+            fileAssetRepository.save(saved);
+            return new PublicImageUploadResponse(saved.getId(), saved.getPublicUrl());
+        } catch (IllegalArgumentException exception) {
+            throw new WarningException("files.validation.upload.invalid");
+        } catch (Exception exception) {
+            throw new RuntimeException("Erro ao salvar arquivo.", exception);
+        }
+    }
+
+    private UserEntity getAuthenticatedUserEntity() {
+        String email = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+            .map(Authentication::getName)
+            .filter(name -> !name.isBlank())
+            .orElseThrow(() -> new WarningException("auth.session.invalid"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new WarningException("auth.user.not.registered"));
+    }
+
+    private String normalizeImageMimeType(String mimeType) {
+        if (mimeType == null) return "image/png";
+        if (mimeType.equals("image/jpeg") || mimeType.equals("image/png") || mimeType.equals("image/webp")) {
+            return mimeType;
+        }
+        throw new WarningException("files.validation.upload.invalid");
+    }
+
+    private String extensionFromMimeType(String mimeType) {
+        return switch (mimeType) {
+            case "image/jpeg" -> "jpg";
+            case "image/webp" -> "webp";
+            default -> "png";
+        };
     }
 
     public record FileBinaryData(byte[] bytes, String mimeType) {}

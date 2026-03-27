@@ -14,6 +14,7 @@ public class MessageSourceConfig {
         source.setBasenames(
             "classpath:i18n/messages-common",
             "classpath:i18n/messages-users",
+            "classpath:i18n/messages-files",
             "classpath:i18n/messages-groups",
             "classpath:i18n/messages-products"
         );

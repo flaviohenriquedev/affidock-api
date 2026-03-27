@@ -26,6 +26,18 @@ public class ProductEntity extends BaseAuditableEntity {
     @Column(name = "affiliate_url", nullable = false, length = 800)
     private String affiliateUrl;
 
+    @Column(name = "image_url", length = 1200)
+    private String imageUrl;
+
+    @Column(name = "producer_name", length = 180)
+    private String producerName;
+
+    @Column(name = "original_price_cents")
+    private Long originalPriceCents;
+
+    @Column(name = "sale_price_cents")
+    private Long salePriceCents;
+
     public GroupEntity getGroup() {
         return group;
     }
@@ -56,5 +68,37 @@ public class ProductEntity extends BaseAuditableEntity {
 
     public void setAffiliateUrl(String affiliateUrl) {
         this.affiliateUrl = affiliateUrl;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getProducerName() {
+        return producerName;
+    }
+
+    public void setProducerName(String producerName) {
+        this.producerName = producerName;
+    }
+
+    public Long getOriginalPriceCents() {
+        return originalPriceCents;
+    }
+
+    public void setOriginalPriceCents(Long originalPriceCents) {
+        this.originalPriceCents = originalPriceCents;
+    }
+
+    public Long getSalePriceCents() {
+        return salePriceCents;
+    }
+
+    public void setSalePriceCents(Long salePriceCents) {
+        this.salePriceCents = salePriceCents;
     }
 }

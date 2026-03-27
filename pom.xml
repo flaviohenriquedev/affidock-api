@@ -96,6 +96,16 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<configuration>
+					<url>jdbc:postgresql://localhost:5432/affidock</url>
+					<user>postgres</user>
+					<password>postgres</password>
+					<locations>filesystem:src/main/resources/db/migration</locations>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

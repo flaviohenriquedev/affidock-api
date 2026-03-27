@@ -14,6 +14,10 @@ public record ProductResponse(
     UUID groupId,
     String name,
     String accentHex,
-    String affiliateUrl
+    String affiliateUrl,
+    String imageUrl,
+    String producerName,
+    Long originalPriceCents,
+    Long salePriceCents
 ) {
 }

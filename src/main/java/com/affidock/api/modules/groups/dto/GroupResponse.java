@@ -14,6 +14,7 @@ public record GroupResponse(
     String name,
     String brandHex,
     String iconSlug,
+    String coverImageUrl,
     int productCount
 ) {
 }

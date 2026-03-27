@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local file storage (simulated S3 / avatars / uploads) ###
+storage/

@@ -22,6 +22,9 @@ public class GroupEntity extends BaseAuditableEntity {
     @Column(name = "icon_slug", nullable = false, length = 80)
     private String iconSlug;
 
+    @Column(name = "cover_image_url", length = 1200)
+    private String coverImageUrl;
+
     @OneToMany(mappedBy = "group")
     private List<ProductEntity> products = new ArrayList<>();
 
@@ -47,6 +50,14 @@ public class GroupEntity extends BaseAuditableEntity {
 
     public void setIconSlug(String iconSlug) {
         this.iconSlug = iconSlug;
+    }
+
+    public String getCoverImageUrl() {
+        return coverImageUrl;
+    }
+
+    public void setCoverImageUrl(String coverImageUrl) {
+        this.coverImageUrl = coverImageUrl;
     }
 
     public List<ProductEntity> getProducts() {

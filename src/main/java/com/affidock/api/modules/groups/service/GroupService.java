@@ -24,6 +24,7 @@ public class GroupService extends BaseService<GroupEntity, GroupRequest, GroupRe
         entity.setName(request.name());
         entity.setBrandHex(request.brandHex());
         entity.setIconSlug(request.iconSlug());
+        entity.setCoverImageUrl(normalizeNullable(request.coverImageUrl()));
         return entity;
     }
 
@@ -32,6 +33,7 @@ public class GroupService extends BaseService<GroupEntity, GroupRequest, GroupRe
         entity.setName(request.name());
         entity.setBrandHex(request.brandHex());
         entity.setIconSlug(request.iconSlug());
+        entity.setCoverImageUrl(normalizeNullable(request.coverImageUrl()));
     }
 
     @Override
@@ -47,7 +49,14 @@ public class GroupService extends BaseService<GroupEntity, GroupRequest, GroupRe
             entity.getName(),
             entity.getBrandHex(),
             entity.getIconSlug(),
+            entity.getCoverImageUrl(),
             Math.toIntExact(productCount)
         );
+    }
+
+    private String normalizeNullable(String value) {
+        if (value == null) return null;
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

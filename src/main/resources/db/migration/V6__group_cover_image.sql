@@ -1,0 +1,2 @@
+ALTER TABLE groups
+    ADD COLUMN IF NOT EXISTS cover_image_url VARCHAR(1200);
