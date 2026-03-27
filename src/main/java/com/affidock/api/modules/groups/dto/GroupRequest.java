@@ -10,7 +10,9 @@ public record GroupRequest(
     @NotBlank(message = "groups.validation.brandHex.required")
     @Pattern(regexp = "^#[A-Fa-f0-9]{6}$", message = "groups.validation.brandHex.invalid")
     String brandHex,
-    @NotBlank(message = "groups.validation.iconSlug.required")
+    /** Opcional se houver imagem de capa; vazio = sem icone Simple Icons. */
+    @Pattern(regexp = "^[a-z0-9-]*$", message = "groups.validation.iconSlug.invalid")
+    @Size(max = 80, message = "groups.validation.iconSlug.length")
     String iconSlug,
     @Size(max = 1200, message = "groups.validation.coverImageUrl.length")
     String coverImageUrl

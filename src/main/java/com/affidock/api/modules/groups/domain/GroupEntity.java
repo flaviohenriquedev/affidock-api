@@ -19,7 +19,7 @@ public class GroupEntity extends BaseAuditableEntity {
     @Column(name = "brand_hex", nullable = false, length = 7)
     private String brandHex;
 
-    @Column(name = "icon_slug", nullable = false, length = 80)
+    @Column(name = "icon_slug", nullable = true, length = 80)
     private String iconSlug;
 
     @Column(name = "cover_image_url", length = 1200)

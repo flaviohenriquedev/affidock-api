@@ -1,0 +1,1 @@
+ALTER TABLE groups ALTER COLUMN icon_slug DROP NOT NULL;

@@ -23,7 +23,7 @@ public class GroupService extends BaseService<GroupEntity, GroupRequest, GroupRe
         GroupEntity entity = new GroupEntity();
         entity.setName(request.name());
         entity.setBrandHex(request.brandHex());
-        entity.setIconSlug(request.iconSlug());
+        entity.setIconSlug(normalizeIconSlug(request.iconSlug()));
         entity.setCoverImageUrl(normalizeNullable(request.coverImageUrl()));
         return entity;
     }
@@ -32,7 +32,7 @@ public class GroupService extends BaseService<GroupEntity, GroupRequest, GroupRe
     protected void updateEntity(GroupEntity entity, GroupRequest request) {
         entity.setName(request.name());
         entity.setBrandHex(request.brandHex());
-        entity.setIconSlug(request.iconSlug());
+        entity.setIconSlug(normalizeIconSlug(request.iconSlug()));
         entity.setCoverImageUrl(normalizeNullable(request.coverImageUrl()));
     }
 
@@ -57,6 +57,13 @@ public class GroupService extends BaseService<GroupEntity, GroupRequest, GroupRe
     private String normalizeNullable(String value) {
         if (value == null) return null;
         String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    /** Empty or blank becomes null (no Simple Icons logo). */
+    private String normalizeIconSlug(String value) {
+        if (value == null) return null;
+        String trimmed = value.trim().toLowerCase();
         return trimmed.isEmpty() ? null : trimmed;
     }
 }
